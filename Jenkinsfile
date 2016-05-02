@@ -3,7 +3,7 @@ jettyUrl = 'http://localhost:18081/'
 def servers
 
 stage 'Dev'
-node {
+node ('master') {
     checkout scm
     servers = load 'servers.groovy'
     mvn '-o clean package'
@@ -18,7 +18,7 @@ parallel(longerTests: {
 })
 
 stage name: 'Staging', concurrency: 1
-node {
+node ('master') {
     servers.deploy 'staging'
 }
 
@@ -30,7 +30,7 @@ try {
 }
 
 stage name: 'Production', concurrency: 1
-node {
+node ('master') {
     sh "wget -O - -S ${jettyUrl}staging/"
     echo 'Production server looks to be alive'
     servers.deploy 'production'
@@ -42,7 +42,7 @@ def mvn(args) {
 }
 
 def runTests(servers, duration) {
-    node {
+    node ('master') {
         checkout scm
         servers.runWithServer {id ->
             mvn "-o -f sometests test -Durl=${jettyUrl}${id}/ -Dduration=${duration}"
