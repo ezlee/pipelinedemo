@@ -1,4 +1,4 @@
-jettyUrl = 'http://localhost:8081/'
+jettyUrl = 'http://localhost:18081/'
 
 def servers
 
